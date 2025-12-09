@@ -45,7 +45,7 @@ resource "kubernetes_deployment" "webapp"{
     }
 
     spec {
-        replicas = 2
+        replicas = var.replicas
     # selector - tells deploymeny what to manage
     selector {
         match_labels = {
@@ -78,7 +78,7 @@ resource "kubernetes_deployment" "webapp"{
                         requests = {
                             
                         cpu = "250m"
-                        memoery = "128Mi"
+                        memory = "128Mi"
                         }
                     }
 
