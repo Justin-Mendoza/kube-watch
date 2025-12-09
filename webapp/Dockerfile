@@ -2,7 +2,7 @@
 # turning app into static binary so it doesnt rely on system libraries
 
 # image will be used to composource code 
-FROM golang:1.21-alpine AS builder
+FROM golang:1.25-alpine AS builder
 
 # set working directory
 
@@ -10,8 +10,8 @@ WORKDIR /app
 
 # copy go.mod and go.sum, if not, docker caches go mod download
 
-COPY go.mod go.sum ./
-RUN go mod download
+COPY go.mod ./
+
 
 # copes rest of source code
 COPY . .
@@ -20,7 +20,7 @@ COPY . .
 # CGO_ENABLED=0: atatically linked binary
 # -o /go-service: setting output name of executable
 #  -ldflags ="-s -w": removes symbol tables and debug info to make binary size smalelr
-RUN CGO_ENABLED=0 go build -ldflags = "-s -w" -o /go-service main.go
+RUN CGO_ENABLED=0 go build -ldflags="-s -w" -o /go-service main.go
 
 # stage 2: final image
 # smallest base image, no dependenscies, pretty much empty
