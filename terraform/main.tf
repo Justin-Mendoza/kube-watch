@@ -70,6 +70,8 @@ resource "kubernetes_deployment" "webapp"{
                         container_port = 8080
                     }
 
+                    image_pull_policy = "Never"
+
                     resources{
                         limits = {
                             cpu = "500m"
