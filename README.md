@@ -14,7 +14,7 @@ kube-watch provides three core components:
 
 ```
 kube-watch/
-├── cli/                  # Go CLI tool (deploy, destroy, monitor)
+├── cli/                  # Go CLI tool (deploy, destroy, monitor, capacity)
 │   ├── main.go
 │   └── go.mod
 ├── terraform/            # Kubernetes infrastructure-as-code
@@ -26,6 +26,7 @@ kube-watch/
 │   ├── main.go
 │   ├── Dockerfile
 │   └── go.mod
+├── TICKETS.md            # Development tickets and tracking
 └── README.md
 ```
 
@@ -56,19 +57,24 @@ kube-watch/
 
 3. Access the service:
    ```sh
-   curl http://localhost:30080
+   # If using minikube
+   minikube service go-webapp-service -n local-go-app
+
+   # Or manually
+   curl $(minikube ip):30080
    ```
 
 ### CLI Usage
 
 ```sh
 cd cli
-go run main.go [deploy|destroy|monitor]
+go run main.go [deploy|destroy|monitor|capacity]
 ```
 
 - `deploy` — Provisions infrastructure and deploys the webapp
 - `destroy` — Tears down all deployed resources
 - `monitor` — Watches cluster and workload health
+- `capacity` — Reports node and namespace resource utilization (planned)
 
 ## Current State
 
@@ -84,7 +90,8 @@ go run main.go [deploy|destroy|monitor]
 - Implement `deploy` command wrapping Terraform apply and image builds
 - Implement `destroy` command for full teardown of resources
 - Implement `monitor` command with live pod status, restart counts, and resource consumption
-- Add structured logging and error handling
+- Implement `capacity` command for node and namespace resource reporting
+- Add structured logging and error handling across all commands
 
 ### Multi-Cluster Support
 - Extend CLI and Terraform to target multiple Kubernetes contexts
@@ -104,6 +111,7 @@ go run main.go [deploy|destroy|monitor]
 
 ### Observability
 - Integrate Prometheus metrics collection
+- Wire webapp dashboard to display real cluster metrics from the Kubernetes API
 - Surface pod health, restart history, and resource metrics through the CLI
 - Add alerting thresholds for workload anomalies
 - Dashboard output for fleet-wide status

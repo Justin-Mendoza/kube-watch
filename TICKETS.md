@@ -27,11 +27,12 @@ Set up the local development environment to get the full deploy loop working end
 **Depends On:** KW-001
 
 **Description:**
-The CLI has a bad import (`"fmt/log"`) that will prevent compilation. Clean up the import block so the project builds.
+The CLI has a bad import (`"fmt/log"`) that will prevent compilation, plus several unused imports (`"net/http"`, `"time"`, `"context"`, `"bufio"`) for functions that haven't been implemented yet. Clean up the import block so the project builds.
 
 **Acceptance Criteria:**
 - [ ] Remove invalid `"fmt/log"` import
-- [ ] Remove any unused imports
+- [ ] Remove unused imports (`net/http`, `time`, `context`, `bufio`) — re-add as needed in KW-003/004/005
+- [ ] Keep `os/exec`, `os`, `fmt` which are needed for the current main function
 - [ ] `go build` compiles successfully
 
 ---
@@ -209,3 +210,57 @@ Add support for namespace-level resource quotas and multi-tenancy to simulate pl
 - [ ] Configurable CPU and memory limits per namespace
 - [ ] CLI `capacity` command shows quota usage per namespace
 - [ ] Warn when a namespace is approaching its quota limit
+
+---
+
+## KW-013: Webapp Live Dashboard Metrics
+**Priority:** Medium
+**Status:** To Do
+**Component:** Webapp
+**Depends On:** KW-005
+
+**Description:**
+Replace the hardcoded JavaScript counters on the webapp dashboard with real data from the Kubernetes API. The webapp should query the cluster for actual pod count, node count, and resource utilization.
+
+**Acceptance Criteria:**
+- [ ] Webapp queries Kubernetes API using in-cluster service account or kubeconfig
+- [ ] `/api/metrics` endpoint returns real node count, pod count, CPU, and memory usage as JSON
+- [ ] Frontend fetches from `/api/metrics` and displays real values
+- [ ] Dashboard auto-refreshes on an interval
+- [ ] Graceful fallback if metrics are unavailable
+
+---
+
+## KW-014: Structured Logging and Error Handling
+**Priority:** Medium
+**Status:** To Do
+**Component:** CLI
+**Depends On:** KW-003, KW-004, KW-005
+
+**Description:**
+Add consistent structured logging and error handling across all CLI commands. Replace ad-hoc print statements with a structured logger and ensure all commands fail gracefully with actionable error messages.
+
+**Acceptance Criteria:**
+- [ ] Use a structured logging library (e.g., `slog` or `zerolog`)
+- [ ] All commands log start, progress, and completion with context
+- [ ] Errors include the failing step and a suggested fix where possible
+- [ ] `--verbose` flag for debug-level output
+- [ ] Non-zero exit codes on failure
+
+---
+
+## KW-015: Self-Service Deployment Workflows
+**Priority:** Low
+**Status:** To Do
+**Component:** Platform
+**Depends On:** KW-007, KW-012
+
+**Description:**
+Enable application teams to deploy workloads through a config-driven workflow without needing direct access to Terraform or kubectl. Teams define their workload in a config file and the CLI handles the rest.
+
+**Acceptance Criteria:**
+- [ ] YAML/JSON workload config format (image, replicas, resources, namespace)
+- [ ] `deploy --config app.yaml` reads config and provisions resources
+- [ ] Validates config against namespace quotas before deploying
+- [ ] Supports targeting a specific cluster or auto-placement via KW-011
+- [ ] Outputs deployment status and service URL on completion
