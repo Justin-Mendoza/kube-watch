@@ -87,7 +87,7 @@ resource "kubernetes_deployment" "webapp"{
                     # health check for monitoring
                     liveness_probe {
                         http_get {
-                            path = "/"
+                            path = "/health"
                             port = 8080
                         }
                     # start 10 seconds adfter container start & check health every 10 seconds
